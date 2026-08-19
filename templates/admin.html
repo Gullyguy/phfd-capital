@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Portfolio Dashboard | PHFD Capital{% endblock %}
+{% block content %}
+<section class="admin-shell">
+  <div class="admin-topbar">
+    <div><p class="kicker">PORTFOLIO COMMAND</p><h1>Capital pipeline.</h1><p>Signed in as {{ admin }}. Sandbox transmissions only unless a live provider is explicitly enabled.</p></div>
+    <div class="admin-actions"><a class="button button-ghost" href="/admin/partners">Partner room</a><a class="button button-primary" href="/admin/export.csv">Export CSV</a></div>
+  </div>
+  <div class="dashboard-metrics">
+    <article><span>Applications</span><strong>{{ metrics.total_applications }}</strong></article>
+    <article><span>Capital requested</span><strong>{{ metrics.total_requested | money }}</strong></article>
+    <article><span>Average readiness</span><strong>{{ metrics.average_score }}</strong></article>
+    <article><span>HFFI eligible profiles</span><strong>{{ metrics.hffi_eligible_profiles }}</strong></article>
+  </div>
+  <div class="status-strip">
+    {% for label, count in metrics.by_status.items() %}<span><b>{{ count }}</b> {{ label }}</span>{% endfor %}
+  </div>
+
+  <div class="table-shell">
+    <div class="table-head"><h2>Application queue</h2><input type="search" placeholder="Search businesses, names, ZIPs..." data-table-search></div>
+    <div class="responsive-table">
+      <table data-admin-table>
+        <thead><tr><th>Created</th><th>Business</th><th>Request</th><th>Score</th><th>HFFI</th><th>Status</th><th></th></tr></thead>
+        <tbody>
+          {% for item in applications %}
+          <tr data-search="{{ item.business_name }} {{ item.first_name }} {{ item.last_name }} {{ item.email }} {{ item.zip_code }} {{ item.status }}">
+            <td>{{ item.created_at[:10] }}</td>
+            <td><strong>{{ item.business_name }}</strong><small>{{ item.first_name }} {{ item.last_name }} · {{ item.zip_code or 'No ZIP' }}</small></td>
+            <td>{{ item.requested_amount | money }}</td>
+            <td><span class="score-pill band-{{ item.readiness_band|lower|replace(' ', '-') }}">{{ item.readiness_score }}</span><small>{{ item.readiness_band }}</small></td>
+            <td><span class="status-chip">{{ item.hffi_result.status }}</span></td>
+            <td>{{ item.status }}</td>
+            <td><a class="table-link" href="/admin/applications/{{ item.id }}">Review →</a></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7" class="empty-state">No profiles yet. <a href="/apply">Create the first one.</a></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

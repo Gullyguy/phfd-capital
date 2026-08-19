@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}{{ status_code }} | PHFD Capital{% endblock %}
+{% block content %}
+<section class="error-page"><p class="kicker">ERROR {{ status_code }}</p><h1>That move didn't land.</h1><p>{{ detail }}</p><a class="button button-primary" href="/">Return home</a></section>
+{% endblock %}

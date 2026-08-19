@@ -1,0 +1,12 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
+data/*.db
+data/*.db-shm
+data/*.db-wal
+screenshots/
+.venv/
+firebase-debug.log
+firebase-debug.*.log
+.DS_Store

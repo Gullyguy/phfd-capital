@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Partner Room | PHFD Capital{% endblock %}
+{% block content %}
+<section class="admin-shell">
+  <div class="breadcrumb"><a href="/admin">← Portfolio</a><span>/</span><span>Partner room</span></div>
+  <div class="admin-topbar"><div><p class="kicker">WHITE-LABEL PARTNERS</p><h1>Close the capital stack.</h1><p>Track outreach, diligence, commercial terms, legal ownership, integration, and pilot readiness.</p></div></div>
+  <div class="partner-grid">
+    {% for partner in partners %}
+    <article class="partner-card">
+      <div class="partner-rank">0{{ partner.priority }}</div>
+      <p class="kicker">{{ partner.category }}</p>
+      <h2>{{ partner.name }}</h2>
+      <p>{{ partner.fit_summary }}</p>
+      <dl><dt>Contact</dt><dd>{{ partner.contact_method }}</dd>{% if partner.contact_email %}<dt>Email</dt><dd><a href="mailto:{{ partner.contact_email }}">{{ partner.contact_email }}</a></dd>{% endif %}{% if partner.contact_phone %}<dt>Phone</dt><dd>{{ partner.contact_phone }}</dd>{% endif %}<dt>Current status</dt><dd><strong>{{ partner.status }}</strong></dd></dl>
+      <a class="text-link" href="{{ partner.website }}" target="_blank" rel="noopener">Open partner site →</a>
+      <form action="/admin/partners/{{ partner.slug }}/status" method="post">
+        <label>Status<input name="status_value" value="{{ partner.status }}"></label>
+        <label>Diligence notes<textarea name="notes" rows="5">{{ partner.notes or '' }}</textarea></label>
+        <button class="mini-button">Update</button>
+      </form>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

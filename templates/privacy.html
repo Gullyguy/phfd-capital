@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Privacy Notice | PHFD Capital{% endblock %}
+{% block content %}
+<section class="legal-page">
+  <p class="kicker">PRIVACY NOTICE</p>
+  <h1>Your business data should move with permission.</h1>
+  <div class="legal-callout"><strong>Demonstration notice:</strong> This sandbox notice must be replaced with a counsel-approved, provider-specific privacy notice before public launch or collection of sensitive financial data.</div>
+
+  <h2>What this MVP collects</h2>
+  <p>The demonstration intake collects basic contact information, business identity, self-reported operating metrics, requested capital, readiness information, optional healthy-food financing information, and separate consent choices.</p>
+
+  <h2>What this MVP does not collect</h2>
+  <p>The default sandbox does not request Social Security numbers, dates of birth, owner identity documents, raw bank credentials, full tax identification numbers, or consumer-purpose loan information.</p>
+
+  <h2>How information is used</h2>
+  <p>Information is used to create an educational capital-readiness profile, screen potential HFFI alignment, prepare a human review workflow, and identify possible business-capital partner routes. The readiness score is not a credit decision.</p>
+
+  <h2>Partner sharing</h2>
+  <p>No live lender or capital provider receives information in the default sandbox. A production version must record purpose-specific consent before sharing data with a selected provider and must identify the provider, lender, data fields, purpose, retention period, and revocation process.</p>
+
+  <h2>Data control and deletion</h2>
+  <p>The production privacy program must establish verified access, correction, deletion, export, opt-out, retention, incident-response, and complaint procedures that match applicable law and the contracted provider relationship.</p>
+
+  <h2>Security</h2>
+  <p>This local MVP uses basic security headers and an administrative password. It is not approved for sensitive financial data. Production requires managed authentication, encryption, secrets management, secure document storage, logging, vulnerability management, access controls, vendor diligence, and penetration testing.</p>
+</section>
+{% endblock %}

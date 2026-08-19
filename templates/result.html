@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Capital Profile | PHFD Capital{% endblock %}
+{% block content %}
+<section class="result-hero">
+  <div>
+    <p class="kicker">PROFILE CREATED</p>
+    <h1>{{ application.business_name }}</h1>
+    <p>Reference {{ application.id[:8] | upper }} · Created {{ application.created_at[:10] }}</p>
+  </div>
+  <a class="button button-ghost" href="/apply">Create another</a>
+</section>
+
+<section class="result-grid">
+  <article class="score-card">
+    <div class="score-ring large" style="--score: {{ application.readiness_score }}">
+      <strong>{{ application.readiness_score }}</strong><span>OUT OF 100</span>
+    </div>
+    <div><p class="kicker">CAPITAL READINESS</p><h2>{{ application.readiness_band }}</h2><p>This score is a planning and triage tool. It is not a credit decision.</p></div>
+  </article>
+  <article class="metric-card"><span>Requested</span><strong>{{ application.requested_amount | money }}</strong><small>{{ application.requested_term_months }}-month preference</small></article>
+  <article class="metric-card"><span>Planning range</span><strong>{{ application.recommended_amount | money }}</strong><small>Internal readiness estimate, not an offer</small></article>
+  <article class="metric-card"><span>HFFI profile</span><strong class="status-text">{{ application.hffi_result.status }}</strong><small>Final program and location verification required</small></article>
+</section>
+
+<section class="result-section">
+  <div class="section-heading compact"><span class="section-number">01</span><div><p class="kicker">WHY THIS SCORE</p><h2>Clear signal. No black box.</h2></div></div>
+  <div class="reason-grid">
+    <article class="positive-card"><h3>Strengths</h3>{% if application.score_strengths %}<ul>{% for item in application.score_strengths %}<li>{{ item }}</li>{% endfor %}</ul>{% else %}<p>No strengths were generated from the current inputs.</p>{% endif %}</article>
+    <article class="action-card"><h3>Review priorities</h3>{% if application.score_reasons %}<ul>{% for item in application.score_reasons %}<li><strong>{{ item.code.replace('_', ' ') | title }}</strong><span>{{ item.detail }}</span></li>{% endfor %}</ul>{% else %}<p>No immediate review reasons were generated.</p>{% endif %}</article>
+  </div>
+</section>
+
+<section class="result-section dark-section inset">
+  <div class="section-heading compact"><span class="section-number">02</span><div><p class="kicker">PARTNER ROUTES</p><h2>Best next lanes.</h2></div></div>
+  <div class="match-list">
+    {% for match in application.partner_matches[:4] %}
+    <article>
+      <div class="fit-score"><strong>{{ match.fit }}</strong><span>FIT</span></div>
+      <div><h3>{{ match.name }}</h3><p class="route">{{ match.route }}</p><p>{{ match.reason }}</p></div>
+      <div class="match-state">{% if match.live_ready %}CONSENT READY{% else %}PARTNER SETUP REQUIRED{% endif %}</div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+{% if application.hffi_project_type %}
+<section class="result-section">
+  <div class="section-heading compact"><span class="section-number">03</span><div><p class="kicker">FOOD CAPITAL</p><h2>{{ application.hffi_result.status }}</h2></div></div>
+  <div class="hffi-grid">
+    <article><h3>Aligned signals</h3><ul>{% for item in application.hffi_result.positives %}<li>{{ item }}</li>{% else %}<li>No positive signals recorded yet.</li>{% endfor %}</ul></article>
+    <article><h3>Conditions to resolve</h3><ul>{% for item in application.hffi_result.conditions %}<li>{{ item }}</li>{% else %}<li>No conditional items generated.</li>{% endfor %}</ul></article>
+    <article class="blockers"><h3>Blocking issues</h3><ul>{% for item in application.hffi_result.blockers %}<li>{{ item }}</li>{% else %}<li>No blocking issues generated from the profile.</li>{% endfor %}</ul></article>
+  </div>
+</section>
+{% endif %}
+
+<section class="next-step-banner">
+  <div><p class="kicker">NEXT ACTION</p><h2>Human review comes next.</h2><p>PHFD can review documentation, correct the profile, complete technical assistance, and decide whether to prepare a referral to an approved capital partner.</p></div>
+  <div class="next-checklist"><span>1</span><p>Gather bank statements, P&L, balance sheet, debt schedule, and formation documents.</p><span>2</span><p>Complete capital-readiness review.</p><span>3</span><p>Select and consent to the right partner route.</p></div>
+</section>
+{% endblock %}

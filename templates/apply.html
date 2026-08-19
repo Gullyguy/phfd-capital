@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Build Your Capital Profile | PHFD Capital{% endblock %}
+{% block content %}
+<section class="form-hero">
+  <p class="kicker">CAPITAL PROFILE</p>
+  <h1>Tell us what you're building.</h1>
+  <p>Business-purpose financing only. This form creates a readiness assessment and partner-routing profile, not a loan application or credit decision.</p>
+</section>
+
+<form class="capital-form" action="/apply" method="post" data-multistep>
+  <div class="progress-shell"><div class="progress-bar" data-progress></div></div>
+  <div class="step-tabs">
+    <button type="button" class="active" data-step-tab="0">1. Business</button>
+    <button type="button" data-step-tab="1">2. Cash flow</button>
+    <button type="button" data-step-tab="2">3. Capital</button>
+    <button type="button" data-step-tab="3">4. Food finance</button>
+    <button type="button" data-step-tab="4">5. Consent</button>
+  </div>
+
+  <section class="form-step active" data-step="0">
+    <div class="step-heading"><span>01</span><div><h2>Who are we working with?</h2><p>Basic contact and business identity.</p></div></div>
+    <div class="field-grid two">
+      <label>First name<input required name="first_name" autocomplete="given-name"></label>
+      <label>Last name<input required name="last_name" autocomplete="family-name"></label>
+      <label>Email<input required type="email" name="email" autocomplete="email"></label>
+      <label>Phone<input name="phone" autocomplete="tel"></label>
+      <label class="wide">Business name<input required name="business_name" autocomplete="organization"></label>
+      <label>Legal structure<select name="legal_structure"><option value="">Select</option><option>LLC</option><option>Corporation</option><option>Public benefit corporation</option><option>Cooperative</option><option>Nonprofit</option><option>Sole proprietorship</option><option>Partnership</option></select></label>
+      <label>Business category<select name="business_type"><option value="retail">Retail</option><option value="service">Service</option><option value="distributor">Distributor</option><option value="logistics">Logistics</option><option value="food_hub">Food hub</option><option value="manufacturer">Manufacturer</option><option value="contractor">Contractor</option><option value="technology">Technology</option><option value="other">Other</option></select></label>
+      <label>Industry<input name="industry" placeholder="Grocery, catering, construction..."></label>
+      <label>Years in business<input required type="number" min="0" step="0.1" name="years_in_business" value="1"></label>
+      <label>State<input name="state" value="CO" maxlength="2"></label>
+      <label>ZIP code<input name="zip_code" inputmode="numeric" maxlength="10"></label>
+    </div>
+  </section>
+
+  <section class="form-step" data-step="1">
+    <div class="step-heading"><span>02</span><div><h2>Show the operating pulse.</h2><p>Use average monthly figures from the last three to twelve months.</p></div></div>
+    <div class="field-grid two">
+      <label>Average monthly revenue<div class="money-input"><span>$</span><input required type="number" min="0" step="100" name="monthly_revenue" value="15000"></div></label>
+      <label>Average monthly operating expenses<div class="money-input"><span>$</span><input required type="number" min="0" step="100" name="monthly_expenses" value="9500"></div></label>
+      <label>Current cash balance<div class="money-input"><span>$</span><input type="number" min="0" step="100" name="cash_balance" value="10000"></div></label>
+      <label>Average daily bank balance<div class="money-input"><span>$</span><input type="number" min="0" step="100" name="avg_daily_balance" value="7500"></div></label>
+      <label>Existing monthly debt payments<div class="money-input"><span>$</span><input type="number" min="0" step="50" name="existing_monthly_debt" value="750"></div></label>
+      <label>NSF events in last 90 days<input type="number" min="0" step="1" name="nsf_count_90d" value="0"></label>
+      <label>Revenue volatility<select name="revenue_volatility"><option value="low">Low, usually within 10%</option><option selected value="moderate">Moderate, usually within 25%</option><option value="high">High, often above 25%</option></select></label>
+      <div class="check-stack">
+        <label class="check"><input type="checkbox" name="documents_ready" value="1"><span>Core financial documents are ready</span></label>
+        <label class="check"><input type="checkbox" name="training_completed" value="1"><span>Capital-readiness training is complete</span></label>
+      </div>
+    </div>
+  </section>
+
+  <section class="form-step" data-step="2">
+    <div class="step-heading"><span>03</span><div><h2>What will the capital unlock?</h2><p>Requested amount and purpose.</p></div></div>
+    <div class="field-grid two">
+      <label>Requested amount<div class="money-input"><span>$</span><input required type="number" min="500" step="500" name="requested_amount" value="25000"></div></label>
+      <label>Preferred term<select name="requested_term_months"><option value="6">6 months</option><option value="12">12 months</option><option selected value="24">24 months</option><option value="36">36 months</option><option value="60">60 months</option></select></label>
+      <label class="wide">Use of funds<textarea required name="loan_purpose" rows="5" placeholder="Inventory, equipment, refrigeration, working capital, vehicle, acquisition..."></textarea></label>
+    </div>
+    <div class="notice"><strong>Planning assumption:</strong> The internal readiness engine stress-tests cash flow with a sample rate for planning. It does not quote pricing or create a credit offer.</div>
+  </section>
+
+  <section class="form-step" data-step="3">
+    <div class="step-heading"><span>04</span><div><h2>Healthy-food financing profile.</h2><p>Complete this section when the business increases access to staple and perishable foods. Skip or select “other” for a general small business.</p></div></div>
+    <div class="field-grid two">
+      <label>Project type<select name="hffi_project_type"><option value="">General small business / not food</option><optgroup label="Potential HFFI retail"><option value="grocery_store">Grocery store</option><option value="food_coop">Food cooperative</option><option value="mobile_market">Mobile market</option><option value="healthy_food_retail">Healthy-food retail</option></optgroup><optgroup label="Potential HFFI supply chain"><option value="food_hub">Food hub</option><option value="distributor">Distributor</option><option value="aggregator">Aggregator</option><option value="processor">Processor</option><option value="manufacturer">Manufacturer</option><option value="cold_storage">Cold storage</option></optgroup><optgroup label="Requires special framing / generally ineligible alone"><option value="ghost_kitchen">Ghost kitchen</option><option value="food_pantry">Food pantry</option><option value="urban_farm">Urban farm</option><option value="restaurant">Restaurant</option></optgroup></select></label>
+      <label>SNAP status<select name="hffi_snap_status"><option value="none">Not authorized / no plan yet</option><option value="will_apply">Will apply before opening/funding</option><option value="authorized">Currently SNAP-authorized</option></select></label>
+      <div class="wide check-grid">
+        <label class="check"><input type="checkbox" name="hffi_underserved_area" value="1"><span>Retail location is in an eligible underserved area</span></label>
+        <label class="check"><input type="checkbox" name="hffi_perishable_food" value="1"><span>Model includes fresh, refrigerated, or frozen perishable foods</span></label>
+        <label class="check"><input type="checkbox" name="hffi_downstream_snap_retail" value="1"><span>Supply-chain business distributes to SNAP retailers in underserved areas</span></label>
+        <label class="check"><input type="checkbox" name="hffi_kitchen_integrated_grocery" value="1"><span>Kitchen is integrated into and necessary for a larger grocery/eligible model</span></label>
+      </div>
+      <fieldset class="wide checkbox-fieldset"><legend>Staple-food categories sold or distributed</legend><div class="check-grid compact"><label class="check"><input type="checkbox" name="hffi_staple_categories" value="fruits_vegetables"><span>Fruits / vegetables</span></label><label class="check"><input type="checkbox" name="hffi_staple_categories" value="meat_fish"><span>Meat / poultry / fish</span></label><label class="check"><input type="checkbox" name="hffi_staple_categories" value="dairy"><span>Dairy</span></label><label class="check"><input type="checkbox" name="hffi_staple_categories" value="bread_cereal"><span>Breads / cereals</span></label></div></fieldset>
+      <fieldset class="wide checkbox-fieldset caution"><legend>Primary model flags</legend><div class="check-grid compact"><label class="check"><input type="checkbox" name="hffi_charitable_free_food" value="1"><span>Free charitable food distribution</span></label><label class="check"><input type="checkbox" name="hffi_preharvest_primary" value="1"><span>Pre-harvest growing / gardening</span></label><label class="check"><input type="checkbox" name="hffi_prepared_food_primary" value="1"><span>Prepared meals, drinks, or snacks</span></label><label class="check"><input type="checkbox" name="hffi_standalone_kitchen" value="1"><span>Standalone kitchen/incubator</span></label><label class="check"><input type="checkbox" name="hffi_few_packaged_goods_only" value="1"><span>Only one or a few packaged goods</span></label></div></fieldset>
+      <label class="wide">Food-finance notes<textarea name="hffi_notes" rows="4" placeholder="Describe the store, route, products, downstream retailers, location, or supply-chain role."></textarea></label>
+    </div>
+  </section>
+
+  <section class="form-step" data-step="4">
+    <div class="step-heading"><span>05</span><div><h2>Control your data.</h2><p>No live lender receives data from this MVP unless a contracted integration is activated and you expressly consent.</p></div></div>
+    <div class="consent-panel">
+      <label class="check large"><input type="checkbox" name="bank_data_consent" value="1"><span><strong>Bank-data readiness</strong><small>I am open to securely connecting business bank/payment data through a future authorized provider.</small></span></label>
+      <label class="check large"><input type="checkbox" name="partner_data_consent" value="1"><span><strong>Partner-sharing consent</strong><small>I authorize PHFD to prepare and, after human review, share this business profile with selected capital partners. No live transmission occurs in the default sandbox.</small></span></label>
+    </div>
+    <div class="certification">By submitting, I certify the information is accurate to the best of my knowledge. I understand this is an educational readiness profile, not a loan application, approval, denial, credit offer, or guarantee of funding.</div>
+  </section>
+
+  <div class="form-actions">
+    <button type="button" class="button button-ghost hidden" data-prev>← Back</button>
+    <button type="button" class="button button-primary" data-next>Continue →</button>
+    <button type="submit" class="button button-primary hidden" data-submit>Create my profile</button>
+  </div>
+</form>
+{% endblock %}

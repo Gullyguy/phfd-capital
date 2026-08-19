@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Review {{ application.business_name }} | PHFD Capital{% endblock %}
+{% block content %}
+<section class="admin-shell">
+  <div class="breadcrumb"><a href="/admin">← Portfolio</a><span>/</span><span>{{ application.business_name }}</span></div>
+  <div class="admin-topbar review-title">
+    <div><p class="kicker">APPLICATION {{ application.id[:8] | upper }}</p><h1>{{ application.business_name }}</h1><p>{{ application.first_name }} {{ application.last_name }} · {{ application.email }} · {{ application.phone or 'No phone' }}</p></div>
+    <div class="review-score"><strong>{{ application.readiness_score }}</strong><span>{{ application.readiness_band }}</span></div>
+  </div>
+
+  <div class="review-layout">
+    <div class="review-main">
+      <section class="review-card">
+        <div class="card-title"><h2>Capital snapshot</h2><span>{{ application.status }}</span></div>
+        <div class="detail-grid">
+          <div><span>Requested</span><strong>{{ application.requested_amount | money }}</strong></div>
+          <div><span>Planning range</span><strong>{{ application.recommended_amount | money }}</strong></div>
+          <div><span>Monthly revenue</span><strong>{{ application.monthly_revenue | money }}</strong></div>
+          <div><span>Monthly expenses</span><strong>{{ application.monthly_expenses | money }}</strong></div>
+          <div><span>Cash balance</span><strong>{{ application.cash_balance | money }}</strong></div>
+          <div><span>Existing monthly debt</span><strong>{{ application.existing_monthly_debt | money }}</strong></div>
+          <div><span>Operating history</span><strong>{{ application.years_in_business }} years</strong></div>
+          <div><span>NSFs / 90 days</span><strong>{{ application.nsf_count_90d }}</strong></div>
+        </div>
+        <div class="purpose-box"><span>Use of funds</span><p>{{ application.loan_purpose or 'Not provided' }}</p></div>
+      </section>
+
+      <section class="review-card">
+        <div class="card-title"><h2>Readiness analysis</h2><span>Non-binding</span></div>
+        <div class="reason-grid compact-grid">
+          <article class="positive-card"><h3>Strengths</h3><ul>{% for item in application.score_strengths %}<li>{{ item }}</li>{% else %}<li>No strengths generated.</li>{% endfor %}</ul></article>
+          <article class="action-card"><h3>Review reasons</h3><ul>{% for item in application.score_reasons %}<li><strong>{{ item.code.replace('_',' ')|title }}</strong><span>{{ item.detail }}</span></li>{% else %}<li>No review reasons generated.</li>{% endfor %}</ul></article>
+        </div>
+      </section>
+
+      <section class="review-card">
+        <div class="card-title"><h2>Partner routing</h2><span>{% if application.partner_data_consent %}Consent captured{% else %}No sharing consent{% endif %}</span></div>
+        <div class="provider-stack">
+          {% for match in application.partner_matches %}
+          <article>
+            <div class="provider-fit"><strong>{{ match.fit }}</strong><span>FIT</span></div>
+            <div><h3>{{ match.name }}</h3><p><b>{{ match.route }}</b> · {{ match.reason }}</p></div>
+            <form action="/admin/applications/{{ application.id }}/submit/{{ match.slug }}" method="post"><button class="mini-button" {% if not application.partner_data_consent %}disabled title="Partner consent required"{% endif %}>Prepare submission</button></form>
+          </article>
+          {% endfor %}
+        </div>
+        {% if application.provider_submissions %}
+        <div class="submission-log"><h3>Provider submission log</h3>{% for slug, result in application.provider_submissions.items() %}<div><strong>{{ slug|title }}</strong><span>{{ result.status }}</span><code>{{ result.mode }}</code><p>{{ result.message or '' }}</p></div>{% endfor %}</div>
+        {% endif %}
+      </section>
+
+      <section class="review-card">
+        <div class="card-title"><h2>HFFI profile</h2><span>{{ application.hffi_result.status }}</span></div>
+        <div class="hffi-grid admin-hffi">
+          <article><h3>Aligned</h3><ul>{% for item in application.hffi_result.positives %}<li>{{ item }}</li>{% else %}<li>No positive signals recorded.</li>{% endfor %}</ul></article>
+          <article><h3>Conditions</h3><ul>{% for item in application.hffi_result.conditions %}<li>{{ item }}</li>{% else %}<li>No conditions generated.</li>{% endfor %}</ul></article>
+          <article class="blockers"><h3>Blockers</h3><ul>{% for item in application.hffi_result.blockers %}<li>{{ item }}</li>{% else %}<li>No blockers generated.</li>{% endfor %}</ul></article>
+        </div>
+      </section>
+    </div>
+
+    <aside class="review-sidebar">
+      <form class="review-card sticky-card" action="/admin/applications/{{ application.id }}/status" method="post">
+        <h2>Human review</h2>
+        <label>Status<select name="status_value">{% for status in status_options %}<option value="{{ status }}" {% if application.status == status %}selected{% endif %}>{{ status }}</option>{% endfor %}</select></label>
+        <label>Reviewer notes<textarea name="reviewer_notes" rows="9">{{ application.reviewer_notes or '' }}</textarea></label>
+        <button class="button button-primary">Save review</button>
+        <p class="microcopy">Keep specific decision reasons in the official contracted-lender system. This MVP is a readiness and referral workflow.</p>
+      </form>
+      <section class="review-card audit-card"><h2>Audit trail</h2>{% for event in events %}<div><span>{{ event.created_at[:16].replace('T',' ') }}</span><strong>{{ event.event_type.replace('_',' ')|title }}</strong><small>{{ event.actor }}</small></div>{% endfor %}</section>
+    </aside>
+  </div>
+</section>
+{% endblock %}
