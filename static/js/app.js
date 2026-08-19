@@ -9,7 +9,10 @@
     const progress = form.querySelector('[data-progress]');
     const progressShell = form.querySelector('[role="progressbar"]');
     const stepStatus = form.querySelector('[data-step-status]');
+    const submitStatus = form.querySelector('[data-submit-status]');
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let dirty = false;
+    let submitting = false;
     let current = 0;
 
     const show = (index) => {
@@ -43,6 +46,19 @@
     tabs.forEach((tab, i) => tab.addEventListener('click', () => {
       if (i <= current || validCurrent()) show(i);
     }));
+    form.addEventListener('input', () => { dirty = true; });
+    form.addEventListener('submit', () => {
+      submitting = true;
+      dirty = false;
+      submit.disabled = true;
+      submit.textContent = 'Creating profile…';
+      if (submitStatus) submitStatus.textContent = 'Creating your capital profile…';
+    });
+    window.addEventListener('beforeunload', (event) => {
+      if (!dirty || submitting) return;
+      event.preventDefault();
+      event.returnValue = '';
+    });
     show(0);
   }
 

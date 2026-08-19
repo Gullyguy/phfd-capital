@@ -23,12 +23,12 @@
     <div class="field-grid two">
       <label>First name<input required name="first_name" autocomplete="given-name"></label>
       <label>Last name<input required name="last_name" autocomplete="family-name"></label>
-      <label>Email<input required type="email" name="email" autocomplete="email"></label>
-      <label>Phone<input name="phone" autocomplete="tel"></label>
+      <label>Email<input required type="email" name="email" autocomplete="email" spellcheck="false"></label>
+      <label>Phone<input type="tel" name="phone" autocomplete="tel" inputmode="tel"></label>
       <label class="wide">Business name<input required name="business_name" autocomplete="organization"></label>
       <label>Legal structure<select name="legal_structure"><option value="">Select</option><option>LLC</option><option>Corporation</option><option>Public benefit corporation</option><option>Cooperative</option><option>Nonprofit</option><option>Sole proprietorship</option><option>Partnership</option></select></label>
       <label>Business category<select name="business_type"><option value="retail">Retail</option><option value="service">Service</option><option value="distributor">Distributor</option><option value="logistics">Logistics</option><option value="food_hub">Food hub</option><option value="manufacturer">Manufacturer</option><option value="contractor">Contractor</option><option value="technology">Technology</option><option value="other">Other</option></select></label>
-      <label>Industry<input name="industry" placeholder="Grocery, catering, construction..."></label>
+      <label>Industry<input name="industry" placeholder="For example, grocery or construction…"></label>
       <label>Years in business<input required type="number" min="0" step="0.1" name="years_in_business" value="1"></label>
       <label>State<input name="state" value="CO" maxlength="2"></label>
       <label>ZIP code<input name="zip_code" inputmode="numeric" maxlength="10"></label>
@@ -57,7 +57,7 @@
     <div class="field-grid two">
       <label>Requested amount<div class="money-input"><span>$</span><input required type="number" min="500" step="500" name="requested_amount" value="25000"></div></label>
       <label>Preferred term<select name="requested_term_months"><option value="6">6 months</option><option value="12">12 months</option><option selected value="24">24 months</option><option value="36">36 months</option><option value="60">60 months</option></select></label>
-      <label class="wide">Use of funds<textarea required name="loan_purpose" rows="5" placeholder="Inventory, equipment, refrigeration, working capital, vehicle, acquisition..."></textarea></label>
+      <label class="wide">Use of funds<textarea required name="loan_purpose" rows="5" placeholder="For example, inventory, equipment, or working capital…"></textarea></label>
     </div>
     <div class="notice"><strong>Planning assumption:</strong> The internal readiness engine stress-tests cash flow with a sample rate for planning. It does not quote pricing or create a credit offer.</div>
   </section>
@@ -75,7 +75,7 @@
       </div>
       <fieldset class="wide checkbox-fieldset"><legend>Staple-food categories sold or distributed</legend><div class="check-grid compact"><label class="check"><input type="checkbox" name="hffi_staple_categories" value="fruits_vegetables"><span>Fruits / vegetables</span></label><label class="check"><input type="checkbox" name="hffi_staple_categories" value="meat_fish"><span>Meat / poultry / fish</span></label><label class="check"><input type="checkbox" name="hffi_staple_categories" value="dairy"><span>Dairy</span></label><label class="check"><input type="checkbox" name="hffi_staple_categories" value="bread_cereal"><span>Breads / cereals</span></label></div></fieldset>
       <fieldset class="wide checkbox-fieldset caution"><legend>Primary model flags</legend><div class="check-grid compact"><label class="check"><input type="checkbox" name="hffi_charitable_free_food" value="1"><span>Free charitable food distribution</span></label><label class="check"><input type="checkbox" name="hffi_preharvest_primary" value="1"><span>Pre-harvest growing / gardening</span></label><label class="check"><input type="checkbox" name="hffi_prepared_food_primary" value="1"><span>Prepared meals, drinks, or snacks</span></label><label class="check"><input type="checkbox" name="hffi_standalone_kitchen" value="1"><span>Standalone kitchen/incubator</span></label><label class="check"><input type="checkbox" name="hffi_few_packaged_goods_only" value="1"><span>Only one or a few packaged goods</span></label></div></fieldset>
-      <label class="wide">Food-finance notes<textarea name="hffi_notes" rows="4" placeholder="Describe the store, route, products, downstream retailers, location, or supply-chain role."></textarea></label>
+      <label class="wide">Food-finance notes<textarea name="hffi_notes" rows="4" placeholder="Describe the store, route, products, or supply-chain role…"></textarea></label>
     </div>
   </section>
 
@@ -90,8 +90,9 @@
 
   <div class="form-actions">
     <button type="button" class="button button-ghost hidden" data-prev>← Back</button>
-    <button type="button" class="button button-primary" data-next>Continue →</button>
+    <button type="button" class="button button-primary" data-next>Continue profile →</button>
     <button type="submit" class="button button-primary hidden" data-submit>Create my profile</button>
   </div>
+  <p class="sr-only" aria-live="polite" data-submit-status></p>
 </form>
 {% endblock %}
