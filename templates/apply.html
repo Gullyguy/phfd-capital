@@ -8,13 +8,14 @@
 </section>
 
 <form class="capital-form" action="/apply" method="post" data-multistep>
-  <div class="progress-shell"><div class="progress-bar" data-progress></div></div>
-  <div class="step-tabs">
-    <button type="button" class="active" data-step-tab="0">1. Business</button>
-    <button type="button" data-step-tab="1">2. Cash flow</button>
-    <button type="button" data-step-tab="2">3. Capital</button>
-    <button type="button" data-step-tab="3">4. Food finance</button>
-    <button type="button" data-step-tab="4">5. Consent</button>
+  <div class="form-progress-meta"><strong data-step-status>Step 1 of 5</strong><span>About 10 minutes</span></div>
+  <div class="progress-shell" role="progressbar" aria-label="Capital profile progress" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1"><div class="progress-bar" data-progress></div></div>
+  <div class="step-tabs" role="tablist" aria-label="Capital profile sections">
+    <button type="button" class="active" role="tab" aria-selected="true" data-step-tab="0">1. Business</button>
+    <button type="button" role="tab" aria-selected="false" data-step-tab="1">2. Cash flow</button>
+    <button type="button" role="tab" aria-selected="false" data-step-tab="2">3. Capital</button>
+    <button type="button" role="tab" aria-selected="false" data-step-tab="3">4. Food finance</button>
+    <button type="button" role="tab" aria-selected="false" data-step-tab="4">5. Consent</button>
   </div>
 
   <section class="form-step active" data-step="0">

@@ -4,14 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="PHFD Capital business-purpose capital readiness and healthy-food finance platform">
+  <meta name="theme-color" content="#090909">
   <title>{% block title %}PHFD Capital{% endblock %}</title>
-  <link rel="stylesheet" href="{{ url_for('static', path='css/app.css') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', path='phfd-logo.png') }}">
+  <link rel="preload" href="{{ url_for('static', path='phfd-logo.png') }}" as="image">
+  <link rel="stylesheet" href="{{ url_for('static', path='css/app.css') }}?v=20260819-2">
   {% block head %}{% endblock %}
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   <header class="site-header">
     <a class="brand" href="/" aria-label="PHFD Capital home">
-      <span class="brand-mark">P</span>
+      <img class="brand-logo" src="{{ url_for('static', path='phfd-logo.png') }}" width="60" height="44" alt="">
       <span class="brand-copy"><strong>PHFD</strong><small>CAPITAL</small></span>
     </a>
     <nav aria-label="Primary navigation">
@@ -22,12 +26,12 @@
     </nav>
   </header>
 
-  <main>{% block content %}{% endblock %}</main>
+  <main id="main-content" tabindex="-1">{% block content %}{% endblock %}</main>
 
   <footer class="site-footer">
     <div>
       <div class="brand footer-brand">
-        <span class="brand-mark">P</span>
+        <img class="brand-logo" src="{{ url_for('static', path='phfd-logo.png') }}" width="60" height="44" alt="Park Hill Financial District">
         <span class="brand-copy"><strong>PHFD</strong><small>CAPITAL</small></span>
       </div>
       <p>Community capital infrastructure for business ownership, healthy-food retail, and resilient local supply chains.</p>
@@ -38,7 +42,7 @@
       <div class="footer-links"><a href="/privacy">Privacy</a><a href="/disclosures">Capital disclosures</a></div>
     </div>
   </footer>
-  <script src="{{ url_for('static', path='js/app.js') }}" defer></script>
+  <script src="{{ url_for('static', path='js/app.js') }}?v=20260819-2" defer></script>
   {% block scripts %}{% endblock %}
 </body>
 </html>

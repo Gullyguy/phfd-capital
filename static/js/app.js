@@ -7,17 +7,25 @@
     const prev = form.querySelector('[data-prev]');
     const submit = form.querySelector('[data-submit]');
     const progress = form.querySelector('[data-progress]');
+    const progressShell = form.querySelector('[role="progressbar"]');
+    const stepStatus = form.querySelector('[data-step-status]');
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let current = 0;
 
     const show = (index) => {
       current = Math.max(0, Math.min(index, steps.length - 1));
       steps.forEach((step, i) => step.classList.toggle('active', i === current));
-      tabs.forEach((tab, i) => tab.classList.toggle('active', i === current));
+      tabs.forEach((tab, i) => {
+        tab.classList.toggle('active', i === current);
+        tab.setAttribute('aria-selected', String(i === current));
+      });
       prev.classList.toggle('hidden', current === 0);
       next.classList.toggle('hidden', current === steps.length - 1);
       submit.classList.toggle('hidden', current !== steps.length - 1);
       progress.style.width = `${((current + 1) / steps.length) * 100}%`;
-      window.scrollTo({ top: Math.max(0, form.offsetTop - 15), behavior: 'smooth' });
+      progressShell?.setAttribute('aria-valuenow', String(current + 1));
+      if (stepStatus) stepStatus.textContent = `Step ${current + 1} of ${steps.length}`;
+      window.scrollTo({ top: Math.max(0, form.offsetTop - 15), behavior: reduceMotion ? 'auto' : 'smooth' });
     };
 
     const validCurrent = () => {
