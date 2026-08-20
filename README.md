@@ -36,6 +36,20 @@ username: admin
 password: change-me-now
 ```
 
+Cloud Run refuses to start with that demonstration password or any production password shorter than 16 characters.
+
+## Security baseline
+
+- Same-origin enforcement on administrative writes
+- Per-instance throttling for failed admin authentication and public applications
+- 256 KiB request-body limit by default
+- HSTS on HTTPS plus CSP, clickjacking, MIME-sniffing, referrer, permissions, and cross-origin isolation headers
+- No-store caching on applicant, result, and administrative pages
+- Constant-time admin credential comparison and Secret Manager deployment support
+- Finite numeric parsing, bounded financing inputs, and stricter email validation
+
+The application limiter reduces low-volume abuse. Put Cloud Armor or an equivalent managed edge rate limiter in front of Cloud Run before collecting real applicant data.
+
 Change those credentials before any shared demonstration.
 
 ## Run tests

@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import csv
 import io
+import math
 import os
+import re
 import secrets
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -18,6 +20,7 @@ from pydantic import BaseModel, ConfigDict, Field
 import db
 import hffi
 import routing
+import security_controls
 import underwriting
 from providers import ProviderError, get_provider
 
@@ -28,6 +31,7 @@ STATIC_DIR = BASE_DIR / "static"
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
+    security_controls.validate_production_config(ADMIN_PASSWORD)
     db.init_db()
     db.seed_partners()
     yield
@@ -49,16 +53,36 @@ security = HTTPBasic(auto_error=False)
 
 @app.middleware("http")
 async def security_headers(request: Request, call_next):
+    content_length = request.headers.get("content-length")
+    if content_length:
+        try:
+            if int(content_length) > security_controls.MAX_REQUEST_BYTES:
+                return JSONResponse(status_code=413, content={"detail": "Request body too large"})
+        except ValueError:
+            return JSONResponse(status_code=400, content={"detail": "Invalid Content-Length header"})
+    if request.method in {"POST", "PUT", "PATCH", "DELETE"} and request.url.path.startswith("/admin/"):
+        try:
+            security_controls.enforce_same_origin(request)
+        except HTTPException as exc:
+            return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
     response = await call_next(request)
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
     response.headers.setdefault("X-Frame-Options", "DENY")
     response.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
     response.headers.setdefault("Permissions-Policy", "camera=(), microphone=(), geolocation=()")
+    response.headers.setdefault("Cross-Origin-Opener-Policy", "same-origin")
+    response.headers.setdefault("Cross-Origin-Resource-Policy", "same-origin")
+    response.headers.setdefault("X-Permitted-Cross-Domain-Policies", "none")
     response.headers.setdefault(
         "Content-Security-Policy",
-        "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; "
+        "default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; object-src 'none'; "
         "img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
     )
+    if request.url.path.startswith(("/admin", "/result/", "/apply")):
+        response.headers.setdefault("Cache-Control", "no-store, max-age=0")
+        response.headers.setdefault("Pragma", "no-cache")
+    if request.url.scheme == "https":
+        response.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
     return response
 
 ADMIN_USER = os.getenv("PHFD_ADMIN_USER", "admin")
@@ -134,8 +158,21 @@ class AssessmentRequest(BaseModel):
     hffi_few_packaged_goods_only: int = 0
 
 
-def authenticate_admin(credentials: HTTPBasicCredentials | None = Depends(security)) -> str:
+def authenticate_admin(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> str:
+    security_controls.enforce_rate_limit(
+        request,
+        "admin-auth",
+        security_controls.ADMIN_ATTEMPTS,
+        security_controls.ADMIN_WINDOW_SECONDS,
+        record=False,
+    )
     if credentials is None:
+        security_controls.enforce_rate_limit(
+            request, "admin-auth", security_controls.ADMIN_ATTEMPTS, security_controls.ADMIN_WINDOW_SECONDS
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Admin credentials required",
@@ -144,6 +181,9 @@ def authenticate_admin(credentials: HTTPBasicCredentials | None = Depends(securi
     username_ok = secrets.compare_digest(credentials.username.encode(), ADMIN_USER.encode())
     password_ok = secrets.compare_digest(credentials.password.encode(), ADMIN_PASSWORD.encode())
     if not (username_ok and password_ok):
+        security_controls.enforce_rate_limit(
+            request, "admin-auth", security_controls.ADMIN_ATTEMPTS, security_controls.ADMIN_WINDOW_SECONDS
+        )
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid admin credentials",
@@ -176,7 +216,8 @@ def _clean_text(value: Any, max_length: int = 2000) -> str:
 
 def _to_float(value: Any) -> float:
     try:
-        return max(float(value or 0), 0.0)
+        number = float(value or 0)
+        return max(number, 0.0) if math.isfinite(number) else 0.0
     except (TypeError, ValueError):
         return 0.0
 
@@ -225,10 +266,16 @@ async def form_payload(request: Request) -> dict[str, Any]:
     missing = [field for field in required if not payload.get(field)]
     if missing:
         raise HTTPException(status_code=422, detail=f"Missing required fields: {', '.join(missing)}")
-    if "@" not in payload["email"]:
+    if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", payload["email"]):
         raise HTTPException(status_code=422, detail="Enter a valid email address")
+    if len(payload["email"]) > 254:
+        raise HTTPException(status_code=422, detail="Email address is too long")
     if payload.get("requested_amount", 0) <= 0:
         raise HTTPException(status_code=422, detail="Requested amount must be greater than zero")
+    if payload.get("requested_amount", 0) > 100_000_000:
+        raise HTTPException(status_code=422, detail="Requested amount exceeds the supported range")
+    if payload.get("monthly_revenue", 0) > 1_000_000_000:
+        raise HTTPException(status_code=422, detail="Monthly revenue exceeds the supported range")
     return payload
 
 
@@ -278,6 +325,12 @@ async def capital_disclosures(request: Request) -> HTMLResponse:
 
 @app.post("/apply", response_class=HTMLResponse)
 async def submit_application(request: Request) -> RedirectResponse:
+    security_controls.enforce_rate_limit(
+        request,
+        "public-application",
+        security_controls.PUBLIC_SUBMISSIONS,
+        security_controls.PUBLIC_WINDOW_SECONDS,
+    )
     payload = await form_payload(request)
     analysis = analyze_payload(payload)
     app_id = db.create_application(payload, analysis)
