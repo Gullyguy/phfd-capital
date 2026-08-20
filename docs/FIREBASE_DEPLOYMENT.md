@@ -2,6 +2,8 @@
 
 PHFD Capital runs as a Python FastAPI service on Cloud Run. Firebase Hosting sends every route to that service. Firestore stores production application, partner, and audit data. Sandbox provider mode remains locked.
 
+Direct Firebase client access is denied by `firestore.rules` and `storage.rules`. The Cloud Run service uses the Admin SDK under its service account, so data authorization stays in server code and Google Cloud IAM. Do not open client rules for convenience.
+
 ## One-time Google Cloud setup
 
 Use project `phfd-capital` and region `us-central1`.

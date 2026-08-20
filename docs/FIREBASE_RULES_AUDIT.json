@@ -1,0 +1,5 @@
+{
+  "score": 5,
+  "summary": "Secure client-rule posture. Firestore and Cloud Storage deny every client read and write. PHFD Capital routes data operations through the Cloud Run service account and Admin SDK, where IAM and server-side authorization apply. No create/update bypass, client authority field, ownership bypass, type confusion, or storage exhaustion path exists through Firebase client rules.",
+  "findings": []
+}

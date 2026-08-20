@@ -7,9 +7,9 @@
 ---
 
 **Project:** PHFD Capital
-**Generated:** 2026-08-19 11:28:37
-**Category:** Fintech/Crypto
-**Design Dials:** Variance 6/10 (Balanced / Modern) | Motion 4/10 (Standard) | Density 5/10 (Standard)
+**Updated:** 2026-08-20
+**Category:** Community development finance
+**Design Dials:** Variance 4/10 (Editorial / restrained) | Motion 2/10 (Subtle) | Density 4/10 (Spacious)
 
 ---
 
@@ -162,9 +162,9 @@
 
 ## Style Guidelines
 
-**Style:** Minimalism & Swiss Style
+**Style:** Civic editorial + Swiss Style
 
-**Keywords:** Clean, simple, spacious, functional, white space, high contrast, geometric, sans-serif, grid-based, essential
+**Keywords:** Human, credible, spacious, functional, warm paper, high contrast, editorial serif accent, grid-based, essential
 
 **Best For:** Enterprise apps, dashboards, documentation sites, SaaS platforms, professional tools
 
@@ -201,6 +201,10 @@ gsap.from('.grid-item', { opacity: 0, scale: 0.92, y: 16, duration: 0.4, stagger
 - ❌ Playful design
 - ❌ Unclear fees
 - ❌ AI purple/pink gradients
+- ❌ Fabricated metrics, fictional testimonials, or undated proof points
+- ❌ Decorative dashboards in marketing heroes
+- ❌ Red glow, glassmorphism, floating orbs, and other generic AI-fintech effects
+- ❌ Oversized claims without plain-language explanation
 
 ### Additional Forbidden Patterns
 

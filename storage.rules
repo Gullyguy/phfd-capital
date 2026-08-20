@@ -1,0 +1,11 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Document upload is contract-gated and not implemented in this MVP.
+    // Deny every client operation until a reviewed storage workflow exists.
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}
